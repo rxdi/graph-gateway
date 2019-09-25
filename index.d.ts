@@ -5,5 +5,5 @@ export declare class MicroserviceModule {
         authorization?: Function;
     }): ModuleWithServices;
 }
-export * from './proxy.service';
 export * from './microservice.interface';
+export * from './proxy.service';

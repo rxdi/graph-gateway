@@ -53,4 +53,5 @@ MicroserviceModule = MicroserviceModule_1 = __decorate([
     core_1.Module()
 ], MicroserviceModule);
 exports.MicroserviceModule = MicroserviceModule;
+__export(require("./microservice.interface"));
 __export(require("./proxy.service"));

@@ -1,6 +1,6 @@
 import { Module, ModuleWithServices } from '@rxdi/core';
 import { ProxyService } from './proxy.service';
-import { MicroserviceInterface } from './microservice.interface';
+import { MicroserviceInterface, Middleware } from './microservice.interface';
 
 @Module()
 export class MicroserviceModule {
@@ -36,5 +36,5 @@ export class MicroserviceModule {
   }
 }
 
-export * from './proxy.service';
 export * from './microservice.interface';
+export * from './proxy.service';

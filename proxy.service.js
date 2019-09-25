@@ -23,6 +23,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@rxdi/core");
 const graphql_tools_1 = require("graphql-tools");
 const apollo_link_http_1 = require("apollo-link-http");
+const microservice_interface_1 = require("./microservice.interface");
 const fetch = require("node-fetch");
 const graphql_1 = require("graphql");
 let ProxyService = class ProxyService {
@@ -47,15 +48,41 @@ let ProxyService = class ProxyService {
                 link,
                 fetcher({ query: queryDocument, variables, operationName, context: { graphqlContext } }) {
                     return __awaiter(this, void 0, void 0, function* () {
+                        let beforeMiddleware = r => r;
+                        let afterMiddlewares = [];
+                        try {
+                            beforeMiddleware = core_1.Container.get(microservice_interface_1.BEFORE_MIDDLEWARE);
+                        }
+                        catch (e) { }
+                        try {
+                            afterMiddlewares = core_1.Container.getMany(microservice_interface_1.AFTER_MIDDLEWARE);
+                        }
+                        catch (e) { }
                         const query = graphql_1.print(queryDocument);
-                        const fetchResult = yield fetch(microservice.link, {
+                        let middlewareOptions = {
+                            context: graphqlContext,
+                            operationName,
+                            variables,
                             method: 'POST',
+                            query,
                             headers: graphqlContext['headers'] || {
                                 'Content-Type': 'application/json'
                             },
+                            microservice
+                        };
+                        middlewareOptions = beforeMiddleware(middlewareOptions);
+                        const fetchResult = yield fetch(middlewareOptions.microservice.link, {
+                            method: middlewareOptions.method,
+                            headers: middlewareOptions.headers,
                             body: JSON.stringify({ query, variables, operationName })
                         });
-                        return fetchResult.json();
+                        let res = yield fetchResult.json();
+                        if (afterMiddlewares.length) {
+                            for (const middleware of afterMiddlewares) {
+                                res = middleware(res, middlewareOptions);
+                            }
+                        }
+                        return res;
                     });
                 }
             });
