@@ -1,4 +1,4 @@
-# @rxdi/graph-gatway
+# @rxdi/graph-gateway
 
 Create easy `graph` gatway from existing Graphql endpoints
 
@@ -11,14 +11,14 @@ Create easy `graph` gatway from existing Graphql endpoints
 ## Installation
 
 ```bash
-npm i -g @rxdi/graph-gatway
+npm i -g @rxdi/graph-gateway
 ```
 
 ## Usage
 
 ```typescript
 import { Module, CoreModule, Bootstrap } from '@gapi/core';
-import { GraphGatewayModule } from '@rxdi/graph-gatway';
+import { GraphGatewayModule } from '@rxdi/graph-gateway';
 
 @Module({
   imports: [
