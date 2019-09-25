@@ -8,7 +8,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
-    "outDir": ".",
+    "outDir": "dist",
     "rootDir": "./src",
     "lib": [
       "es2017",

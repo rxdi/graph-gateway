@@ -8,50 +8,49 @@ import { createHttpLink } from 'apollo-link-http';
 import { MicroserviceInterface } from './microservice.interface';
 import fetch = require('node-fetch');
 import { GraphQLSchema } from 'graphql';
+import { print } from 'graphql';
 
 @Service()
 export class ProxyService {
   constructor(
     @Inject('gapi-microservice-config')
-    private microservices: MicroserviceInterface[],
-    @Inject('gapi-microservice-config-auth')
-    private configAuth: { authorization?: Function }
+    private microservices: MicroserviceInterface[]
   ) {}
 
   public async getSchemaIntrospection(): Promise<GraphQLSchema> {
-    return await this.mergeSchemas(
-      await Promise.all(
+    return mergeSchemas({
+      schemas: await Promise.all(
         this.microservices.map(ep => {
           console.log(`Microservice: ${ep.name} loaded!`);
           return this.getIntrospectSchema(ep);
         })
       )
-    );
-  }
-
-  private mergeSchemas(allSchemas): GraphQLSchema {
-    return mergeSchemas({ schemas: allSchemas });
+    });
   }
 
   private async getIntrospectSchema(
     microservice: MicroserviceInterface
   ): Promise<GraphQLSchema> {
-    const headers = { authorization: '' };
-    if (this.configAuth.authorization) {
-      const Authorization = Container.get<{ sign: (params) => string }>(
-        this.configAuth.authorization
-      );
-      headers.authorization = Authorization.sign({
-        email: microservice.name,
-        id: -1,
-        scope: ['ADMIN']
-      });
-    }
-    const makeDatabaseServiceLink = () =>
-      createHttpLink({ uri: microservice.link, fetch, headers });
+    const link = createHttpLink({ uri: microservice.link, fetch });
     return makeRemoteExecutableSchema({
-      schema: await introspectSchema(makeDatabaseServiceLink()),
-      link: makeDatabaseServiceLink()
+      schema: await introspectSchema(link),
+      link,
+      async fetcher({
+        query: queryDocument,
+        variables,
+        operationName,
+        context: { graphqlContext }
+      }) {
+        const query = print(queryDocument);
+        const fetchResult = await fetch(microservice.link, {
+          method: 'POST',
+          headers: graphqlContext['headers'] || {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ query, variables, operationName })
+        });
+        return fetchResult.json();
+      }
     });
   }
 }
