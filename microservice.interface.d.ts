@@ -6,13 +6,15 @@ export interface MicroserviceInterface {
 export declare type AFTER_MIDDLEWARE = Middleware;
 export declare type BEFORE_MIDDLEWARE = Middleware;
 export interface MiddlewareOptions {
-    context: any;
-    operationName: any;
-    variables: any;
-    query: any;
-    microservice: any;
-    method: any;
-    headers: any;
+    context: Object;
+    operationName: string;
+    variables: Object;
+    query: string;
+    microservice: MicroserviceInterface;
+    method: string | 'POST' | 'GET';
+    headers: {
+        [key: string]: string;
+    };
 }
 export declare type Middleware = (options: MiddlewareOptions) => MiddlewareOptions;
 export declare type MiddlewareAfter = (res: any, options: MiddlewareOptions) => Object;

@@ -7,13 +7,13 @@ export interface MicroserviceInterface {
 export type AFTER_MIDDLEWARE = Middleware;
 export type BEFORE_MIDDLEWARE = Middleware;
 export interface MiddlewareOptions {
-  context;
-  operationName;
-  variables;
-  query;
-  microservice;
-  method;
-  headers;
+  context: Object;
+  operationName: string;
+  variables: Object;
+  query: string;
+  microservice: MicroserviceInterface;
+  method: string | 'POST' | 'GET';
+  headers: { [key: string]: string };
 }
 export type Middleware = (options: MiddlewareOptions) => MiddlewareOptions;
 export type MiddlewareAfter = (res, options: MiddlewareOptions) => Object;
