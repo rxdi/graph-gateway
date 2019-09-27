@@ -23,14 +23,18 @@ export class ProxyService {
     private microservices: MicroserviceInterface[]
   ) {}
 
-  public async getSchemaIntrospection(): Promise<GraphQLSchema> {
+  public async getSchemaIntrospection(microservices?: MicroserviceInterface[]): Promise<GraphQLSchema> {
+    const schemas = await Promise.all(
+      (microservices || this.microservices).map(async ep => {
+        console.log(`Microservice: ${ep.name} loaded!`);
+        return {
+          ...ep,
+          schema: await this.getIntrospectSchema(ep)
+        };
+      })
+    );
     return mergeSchemas({
-      schemas: await Promise.all(
-        this.microservices.map(ep => {
-          console.log(`Microservice: ${ep.name} loaded!`);
-          return this.getIntrospectSchema(ep);
-        })
-      )
+      schemas: schemas.map(res => res.schema)
     });
   }
 
@@ -47,7 +51,7 @@ export class ProxyService {
         operationName,
         context: { graphqlContext }
       }) {
-        let beforeMiddleware: Middleware = r => r;
+        let beforeMiddleware: Middleware = r => Promise.resolve(r);
         let afterMiddlewares: MiddlewareAfter[] = [];
         try {
           beforeMiddleware = Container.get(BEFORE_MIDDLEWARE);
@@ -68,7 +72,7 @@ export class ProxyService {
           microservice
         };
 
-        middlewareOptions = beforeMiddleware(middlewareOptions);
+        middlewareOptions = await beforeMiddleware(middlewareOptions);
         const fetchResult = await fetch(middlewareOptions.microservice.link, {
           method: middlewareOptions.method,
           headers: middlewareOptions.headers,
@@ -77,7 +81,7 @@ export class ProxyService {
         let res = await fetchResult.json();
         if (afterMiddlewares.length) {
           for (const middleware of afterMiddlewares) {
-            res = middleware(res, middlewareOptions);
+            res = await middleware(res, middlewareOptions);
           }
         }
         return res;

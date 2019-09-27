@@ -30,13 +30,17 @@ let ProxyService = class ProxyService {
     constructor(microservices) {
         this.microservices = microservices;
     }
-    getSchemaIntrospection() {
+    getSchemaIntrospection(microservices) {
         return __awaiter(this, void 0, void 0, function* () {
+            const schemas = yield Promise.all((microservices || this.microservices).map((ep) => __awaiter(this, void 0, void 0, function* () {
+                console.log(`Microservice: ${ep.name} loaded!`);
+                return Object.assign({}, ep, { schema: yield this.getIntrospectSchema(ep) });
+            })));
+            core_1.Container.reset('schemas');
+            core_1.Container.remove('schemas');
+            core_1.Container.set('schemas', schemas);
             return graphql_tools_1.mergeSchemas({
-                schemas: yield Promise.all(this.microservices.map(ep => {
-                    console.log(`Microservice: ${ep.name} loaded!`);
-                    return this.getIntrospectSchema(ep);
-                }))
+                schemas: schemas.map(res => res.schema)
             });
         });
     }

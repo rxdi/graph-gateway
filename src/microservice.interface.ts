@@ -15,8 +15,8 @@ export interface MiddlewareOptions {
   method: string | 'POST' | 'GET';
   headers: { [key: string]: string };
 }
-export type Middleware = (options: MiddlewareOptions) => MiddlewareOptions;
-export type MiddlewareAfter = (res, options: MiddlewareOptions) => Object;
+export type Middleware = (options: MiddlewareOptions) => Promise<MiddlewareOptions>;
+export type MiddlewareAfter = (res, options: MiddlewareOptions) => Promise<Object>;
 
 export const BEFORE_MIDDLEWARE = new InjectionToken<Middleware>(
   'graph-gateway-before-middleware-function-token'
