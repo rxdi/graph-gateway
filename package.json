@@ -23,14 +23,14 @@
     "url": "https://github.com/rxdi/graph-gateway/issues"
   },
   "dependencies": {
-    "apollo-link-http": "^1.5.3",
+    "apollo-link-http": "^1.5.15",
     "graphql-tools": "^2.23.1",
     "node-fetch": "^2.1.2"
   },
   "devDependencies": {
     "@gapi/auth": "^1.8.6",
-    "@gapi/core": "^1.8.6",
-    "@rxdi/core": "0.7.17",
+    "@gapi/core": "^1.8.5",
+    "@rxdi/core": "0.7.38",
     "ts-lint": "^4.5.1"
   },
   "types": "./dist/index.d.ts",
