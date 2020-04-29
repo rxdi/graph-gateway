@@ -1,13 +1,12 @@
 {
   "name": "@rxdi/graph-gateway",
-  "version": "0.7.45",
+  "version": "0.7.46",
   "repository": {
     "type": "git",
     "url": "https://github.com/rxdi/graph-gateway"
   },
   "scripts": {
-    "patch": "npm version patch && npm publish --update-readme --access public",
-    "postpublish": "git push -f ssh://git@gitlab.youvolio.com:522/gapi/microservices.git && git push --tags && git push ssh://git@gitlab.youvolio.com:522/gapi/microservices.git --tags"
+    "patch": "npm version patch && npm publish --update-readme --access public"
   },
   "author": {
     "name": "Kristian Tachev(Stradivario)",
