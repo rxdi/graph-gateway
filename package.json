@@ -24,7 +24,7 @@
   "dependencies": {
     "apollo-link-http": "^1.5.15",
     "graphql-tools": "^2.23.1",
-    "node-fetch": "^2.1.2"
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "@gapi/auth": "^1.8.6",
