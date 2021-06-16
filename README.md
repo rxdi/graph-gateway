@@ -1,3 +1,6 @@
+DEPRECATED IN FAVOR OF https://github.com/Stradivario/gapi/tree/master/packages/federation
+This can be used as a reference on how to create `graphql schema stiching` aka old federation.
+
 # @rxdi/graph-gateway
 
 Create easy `graph` gatway from existing Graphql endpoints
